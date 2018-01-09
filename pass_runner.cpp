@@ -1,4 +1,6 @@
 #include "pass_runner.h"
+#include <QDir>
+#include <KLocalizedString>
 
 using namespace std;
 
@@ -9,16 +11,18 @@ pass_runner::pass_runner(QObject *parent, const QVariantList &args)
 {
 	// General runner configuration
 	setObjectName(QLatin1String("Password Store"));
-	m_triggerWord = QLatin1String("kpass");
+	m_triggerWord = QLatin1String("kpass ");
 
 	setSpeed(AbstractRunner::NormalSpeed);
 	setPriority(HighestPriority);
-	setHasRunOptions(true);
+	setIgnoredTypes(Plasma::RunnerContext::NetworkLocation |
+					Plasma::RunnerContext::Help |
+					Plasma::RunnerContext::FileSystem);
 
 	setDefaultSyntax(
 		Plasma::RunnerSyntax(
 			QString::fromLatin1("kpass :q:"),
-			"Looks for a password in Password Store described by :q: and, if present, displays it. Then pressing ENTER copies the password to the clipboard."
+			i18n("Looks for a password in Password Store described by :q: and, if present, displays it. Then pressing ENTER copies the password to the clipboard.")
 		)
 	);
 }
@@ -27,22 +31,28 @@ pass_runner::~pass_runner()
 {
 }
 
+void pass_runner::init()
+{
+	reloadConfiguration();
+}
+
+void pass_runner::reloadConfiguration()
+{
+	KConfigGroup c = config();
+
+	m_path = c.readPathEntry("store-path", QDir::homePath());
+	QFileInfo pathInfo(m_path);
+	if (!pathInfo.isDir()) {
+		m_path = QDir::homePath();
+	}
+}
 
 void pass_runner::match(Plasma::RunnerContext &context)
 {
-	if (!context.isValid()) return;
 	const QString term = context.query();
-	if (!m_triggerWord.isEmpty()) {
-		if (!term.startsWith(m_triggerWord)) {
-			return;
-		}
-	}
+	if (!context.isValid() || m_triggerWord.isEmpty() || !term.startsWith(m_triggerWord)) return;
 
-	Plasma::QueryMatch match(this);
-
-	match.setType(Plasma::QueryMatch::Type::ExactMatch);
-	match.setText(QLatin1String("Hello KPass!"));
-	context.addMatch(match);
+	context.addMatch(helloWorld());
 }
 
 void pass_runner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)

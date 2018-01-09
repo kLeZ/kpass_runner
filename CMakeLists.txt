@@ -14,7 +14,7 @@ include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 
-set(${PROJECT_NAME}_SRCS pass_runner.cpp)
+set(${PROJECT_NAME}_SRCS pass_runner.cpp match_actions.cpp)
 
 add_library(${PROJECT_NAME} MODULE ${${PROJECT_NAME}_SRCS})
 target_link_libraries(${PROJECT_NAME} KF5::Runner Qt5::Widgets KF5::I18n KF5::Service KF5::Plasma)

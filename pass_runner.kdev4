@@ -1,0 +1,3 @@
+[Project]
+Manager=KDevCMakeManager
+Name=pass_runner
