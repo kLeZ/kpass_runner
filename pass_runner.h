@@ -14,6 +14,9 @@ public:
 public: // Plasma::AbstractRunner API
     void match(Plasma::RunnerContext &context) override;
     void run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match) override;
+
+private:
+	QString m_triggerWord;
 };
 
 #endif
