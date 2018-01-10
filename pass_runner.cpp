@@ -40,10 +40,11 @@ void pass_runner::reloadConfiguration()
 {
 	KConfigGroup c = config();
 
-	m_path = c.readPathEntry("store-path", QDir::homePath());
+	QDir path(QDir::homePath() + QDir::separator() + QString::fromLatin1(".password-store"));
+	m_path = c.readPathEntry("store-path", path.absolutePath());
 	QFileInfo pathInfo(m_path);
 	if (!pathInfo.isDir()) {
-		m_path = QDir::homePath();
+		m_path = path.absolutePath();
 	}
 }
 
@@ -53,6 +54,7 @@ void pass_runner::match(Plasma::RunnerContext &context)
 	if (!context.isValid() || m_triggerWord.isEmpty() || !term.startsWith(m_triggerWord)) return;
 
 	context.addMatch(helloWorld());
+	context.addMatches(helloPath());
 }
 
 void pass_runner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)

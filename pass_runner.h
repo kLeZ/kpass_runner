@@ -19,6 +19,7 @@ public: // Plasma::AbstractRunner API
 
 private:
 	Plasma::QueryMatch helloWorld();
+	QList<Plasma::QueryMatch> helloPath();
 	QString m_triggerWord;
 	QString m_path;
 };
