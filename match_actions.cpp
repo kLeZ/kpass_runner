@@ -1,36 +1,41 @@
 #include "pass_runner.h"
-#include <QDir>
-#include <KLocalizedString>
 
 using namespace std;
 
-Plasma::QueryMatch pass_runner::helloWorld() {
+Plasma::QueryMatch KPassRunner::helloWorld() {
 	Plasma::QueryMatch match(this);
 	
-	match.setType(Plasma::QueryMatch::Type::ExactMatch);
-	match.setText(QLatin1String("Hello KRunner Pass!"));
+	match.setType(Plasma::QueryMatch::Type::InformationalMatch);
+	match.setText(QLatin1String("kpass Hello KRunner Pass!"));
 
 	return match;
 }
 
-QList<Plasma::QueryMatch> pass_runner::helloPath()
+QList<Plasma::QueryMatch> KPassRunner::findPaths(QString &term)
 {
 	QList<Plasma::QueryMatch> matches;
 
 	QDir root(m_path);
-	QStringList dirs = root.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+	if (term.contains(QDir::separator())) {
+		QStringList splitted = term.split(QDir::separator(), QString::SplitBehavior::SkipEmptyParts, Qt::CaseSensitivity::CaseInsensitive);
+		QString last = splitted.takeLast();
+		root.cd(last); //BUG: do not take in consideration multiple separators
+	}
+	QStringList dirs = root.entryList(QDir::Dirs | QDir::NoDotAndDotDot | QDir::Readable);
 
-	Plasma::QueryMatch count(this);
-	count.setType(Plasma::QueryMatch::Type::ExactMatch);
-	count.setText(tr("%1").arg(dirs.count()));
-	matches.append(count);
-	
 	foreach (QString dir, dirs)
 	{
-		Plasma::QueryMatch match(this);
-		match.setType(Plasma::QueryMatch::Type::InformationalMatch);
-		match.setText(dir);
-		matches.append(match);
+		if (dir.compare(term, Qt::CaseSensitivity::CaseInsensitive) == 0) {
+			Plasma::QueryMatch match(this);
+			match.setType(Plasma::QueryMatch::Type::InformationalMatch);
+			match.setText(dir);
+			matches.append(match);
+		} else if (dir.startsWith(term, Qt::CaseSensitivity::CaseInsensitive)) {
+			Plasma::QueryMatch match(this);
+			match.setType(Plasma::QueryMatch::Type::InformationalMatch);
+			match.setText(dir);
+			matches.append(match);
+		}
 	}
 	return matches;
 }
