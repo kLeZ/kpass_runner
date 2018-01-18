@@ -29,11 +29,13 @@ QList<Plasma::QueryMatch> KPassRunner::findPaths(QString &term)
 			Plasma::QueryMatch match(this);
 			match.setType(Plasma::QueryMatch::Type::InformationalMatch);
 			match.setText(dir);
+			match.setData(dir.prepend(m_triggerWord).append('/'));
 			matches.append(match);
 		} else if (dir.startsWith(term, Qt::CaseSensitivity::CaseInsensitive)) {
 			Plasma::QueryMatch match(this);
 			match.setType(Plasma::QueryMatch::Type::InformationalMatch);
 			match.setText(dir);
+			match.setData(dir.prepend(m_triggerWord).append('/'));
 			matches.append(match);
 		}
 	}
