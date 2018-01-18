@@ -50,16 +50,17 @@ void KPassRunner::match(Plasma::RunnerContext &context)
 	if (!context.isValid() || m_triggerWord.isEmpty() || !term.startsWith(m_triggerWord)) return;
 
 	QString key = term.mid(m_triggerWord.size());
-// 	context.addMatch(helloWorld());
 	context.addMatches(findPaths(key));
 }
 
 void KPassRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
 	Q_UNUSED(context);
-	if (match.selectedAction() == action(s_copyToClipboardId))
+	if (match.selectedAction() == action(s_copyToClipboardId)
+	&& (match.type() == Plasma::QueryMatch::Type::ExactMatch
+	||  match.type() == Plasma::QueryMatch::Type::PossibleMatch))
 	{
-		QGuiApplication::clipboard()->setText("This is actually an InformationalMatch");
+		QGuiApplication::clipboard()->setText(match.data().toString());
 	}
 }
 

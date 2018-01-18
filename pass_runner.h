@@ -10,11 +10,11 @@
 
 class KPassRunner : public Plasma::AbstractRunner
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    KPassRunner(QObject *parent, const QVariantList &args);
-    ~KPassRunner();
+	KPassRunner(QObject *parent, const QVariantList &args);
+	~KPassRunner();
 
 	void init() override;
 	void reloadConfiguration() override;
